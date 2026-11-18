@@ -26,8 +26,9 @@ const RootLayout = ({ children }: LayoutProps<"/">) => {
     <html
       lang="en"
       className={`${inter.variable} ${jakarta.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="flex min-h-full flex-col">
+      <body className="flex min-h-full flex-col" suppressHydrationWarning>
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />

@@ -1,5 +1,7 @@
+import { HeroSection } from "@/components/home/hero-section"
+
 const HomePage = () => {
-  return <section className="min-h-[60vh]" />
+  return <HeroSection />
 }
 
 export default HomePage
