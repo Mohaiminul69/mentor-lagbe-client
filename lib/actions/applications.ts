@@ -15,6 +15,32 @@ export type ActionResult = {
   message: string
 }
 
+export const updateApplicationStatus = async (
+  id: string,
+  status: "accepted" | "rejected"
+): Promise<ActionResult> => {
+  try {
+    const res = await authFetch(
+      `/applications/${encodeURIComponent(id)}/status`,
+      "PATCH",
+      { status }
+    )
+    const data = await res.json().catch(() => ({}))
+
+    if (!res.ok) {
+      return { ok: false, message: data.message ?? "Could not update the application" }
+    }
+
+    return {
+      ok: true,
+      message: status === "accepted" ? "Application accepted" : "Application rejected",
+    }
+  } catch (error) {
+    unstable_rethrow(error)
+    return { ok: false, message: "Could not reach the server. Please try again." }
+  }
+}
+
 export const cancelApplication = async (id: string): Promise<ActionResult> => {
   try {
     const res = await authFetch(`/applications/${encodeURIComponent(id)}`, "DELETE")

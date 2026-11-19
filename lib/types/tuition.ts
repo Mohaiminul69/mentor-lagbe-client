@@ -16,6 +16,26 @@ export type Tuition = {
   createdAt: string
 }
 
+export type TuitionInput = {
+  title: string
+  subject: string
+  classLevel: string
+  mode: string
+  location: string
+  monthlyFee: number
+  daysPerWeek: number
+  description: string
+  bannerImage: string
+}
+
+export type TutorStats = {
+  total: number
+  approvedActive: number
+  applicants: number
+  plan: string
+  limit: number | null
+}
+
 export type TutorSummary = {
   name: string
   email: string
