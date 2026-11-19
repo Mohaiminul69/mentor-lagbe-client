@@ -3,6 +3,7 @@ import { FeaturedTuitions } from "@/components/home/featured-tuitions"
 import { StatsBand } from "@/components/home/stats-band"
 import { HowItWorks } from "@/components/home/how-it-works"
 import { TopSubjects } from "@/components/home/top-subjects"
+import { PricingSection } from "@/components/home/pricing-section"
 
 const HomePage = () => {
   return (
@@ -12,6 +13,7 @@ const HomePage = () => {
       <StatsBand />
       <HowItWorks />
       <TopSubjects />
+      <PricingSection />
     </>
   )
 }
