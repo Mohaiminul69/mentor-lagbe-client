@@ -1,5 +1,6 @@
 import { CheckCircle2 } from "lucide-react"
 import { Logo } from "@/components/shared/logo"
+import { ThemeToggle } from "@/components/theme/theme-toggle"
 
 const highlights = [
   "Verified tutors across Math, Physics, Programming, IELTS and more",
@@ -33,7 +34,8 @@ const AuthLayout = ({ children }: LayoutProps<"/">) => {
         </p>
       </aside>
 
-      <main className="flex flex-col items-center justify-center bg-muted px-6 py-12">
+      <main className="relative flex flex-col items-center justify-center bg-muted px-6 py-12">
+        <ThemeToggle className="absolute top-4 right-4" />
         <Logo className="mb-8 lg:hidden" />
         <div className="w-full max-w-[440px] rounded-[18px] border bg-card p-8 shadow-card">
           {children}
