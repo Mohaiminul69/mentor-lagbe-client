@@ -15,6 +15,22 @@ export type ActionResult = {
   message: string
 }
 
+export const cancelApplication = async (id: string): Promise<ActionResult> => {
+  try {
+    const res = await authFetch(`/applications/${encodeURIComponent(id)}`, "DELETE")
+    const data = await res.json().catch(() => ({}))
+
+    if (!res.ok) {
+      return { ok: false, message: data.message ?? "Could not cancel the application" }
+    }
+
+    return { ok: true, message: "Application cancelled" }
+  } catch (error) {
+    unstable_rethrow(error)
+    return { ok: false, message: "Could not reach the server. Please try again." }
+  }
+}
+
 export const applyForTuition = async (
   input: ApplyInput
 ): Promise<ActionResult> => {
