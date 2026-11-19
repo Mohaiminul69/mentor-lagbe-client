@@ -16,6 +16,19 @@ export type Tuition = {
   createdAt: string
 }
 
+export type TutorSummary = {
+  name: string
+  email: string
+  image?: string | null
+  bio?: string
+  phone?: string
+  plan?: "free" | "pro"
+}
+
+export type TuitionDetails = Tuition & {
+  tutor: TutorSummary | null
+}
+
 export type TuitionFilters = {
   search: string
   subject: string

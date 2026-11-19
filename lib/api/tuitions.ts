@@ -1,4 +1,8 @@
-import type { Tuition, TuitionFilters } from "@/lib/types/tuition"
+import type {
+  Tuition,
+  TuitionDetails,
+  TuitionFilters,
+} from "@/lib/types/tuition"
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL
 
@@ -9,6 +13,18 @@ export const getFeaturedTuitions = async (): Promise<Tuition[]> => {
     return res.json()
   } catch {
     return []
+  }
+}
+
+export const getTuitionById = async (
+  id: string
+): Promise<TuitionDetails | null> => {
+  try {
+    const res = await fetch(`${apiUrl}/tuitions/${encodeURIComponent(id)}`)
+    if (!res.ok) return null
+    return res.json()
+  } catch {
+    return null
   }
 }
 
