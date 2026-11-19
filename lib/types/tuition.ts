@@ -15,3 +15,10 @@ export type Tuition = {
   isActive: boolean
   createdAt: string
 }
+
+export type TuitionFilters = {
+  search: string
+  subject: string
+  classLevel: string
+  mode: string
+}
