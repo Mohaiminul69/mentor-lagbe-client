@@ -79,7 +79,7 @@ export const HowItWorks = () => {
               aria-selected={audience === tab.value}
               onClick={() => setAudience(tab.value)}
               className={cn(
-                "h-10 rounded-[9px] px-5 text-[15px] font-semibold transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+                "h-10 cursor-pointer rounded-[9px] px-5 text-[15px] font-semibold transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
                 audience === tab.value
                   ? "bg-card text-foreground shadow-card"
                   : "text-muted-foreground hover:text-foreground"
