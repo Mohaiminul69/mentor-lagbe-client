@@ -14,7 +14,7 @@ type Errors = {
   password?: string
 }
 
-export const SignInForm = () => {
+export const SignInForm = ({ redirectTo }: { redirectTo: string }) => {
   const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -47,7 +47,7 @@ export const SignInForm = () => {
     }
 
     toast.success("Signed in successfully")
-    router.push("/")
+    router.push(redirectTo)
     router.refresh()
   }
 

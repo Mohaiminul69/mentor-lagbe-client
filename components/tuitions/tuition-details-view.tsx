@@ -1,3 +1,4 @@
+import type { ReactNode } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import {
@@ -22,7 +23,15 @@ const formatDate = (value: string) =>
     year: "numeric",
   })
 
-export const TuitionDetailsView = ({ tuition }: { tuition: TuitionDetails }) => {
+type TuitionDetailsViewProps = {
+  tuition: TuitionDetails
+  applyPanel: ReactNode
+}
+
+export const TuitionDetailsView = ({
+  tuition,
+  applyPanel,
+}: TuitionDetailsViewProps) => {
   const isOnline = tuition.mode === "Online"
   const tutorName = tuition.tutor?.name ?? tuition.tutorName
   const isProTutor = tuition.tutor?.plan === "pro"
@@ -136,6 +145,7 @@ export const TuitionDetailsView = ({ tuition }: { tuition: TuitionDetails }) => 
                 <span className="truncate text-right font-medium">{tuition.location}</span>
               </li>
             </ul>
+            {applyPanel}
           </div>
 
           <div className="flex flex-col gap-4 rounded-[18px] border bg-card p-6 shadow-card">

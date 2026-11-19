@@ -3,7 +3,14 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { Skeleton } from "@/components/ui/skeleton"
 import { TuitionDetailsView } from "@/components/tuitions/tuition-details-view"
+import {
+  ApplyPanel,
+  type ApplyViewer,
+  type ExistingApplication,
+} from "@/components/tuitions/apply-panel"
 import { getTuitionById } from "@/lib/api/tuitions"
+import { getApplicationStatus } from "@/lib/api/applications"
+import { getSession } from "@/lib/core/server"
 
 export const metadata: Metadata = {
   title: "Tuition Details | MentorLagbe",
@@ -15,13 +22,52 @@ const DetailsLoader = async ({
   params: PageProps<"/tuitions/[id]">["params"]
 }) => {
   const { id } = await params
-  const tuition = await getTuitionById(id)
+  const [tuition, session] = await Promise.all([
+    getTuitionById(id),
+    getSession(),
+  ])
 
   if (!tuition) {
     notFound()
   }
 
-  return <TuitionDetailsView tuition={tuition} />
+  const viewer: ApplyViewer = session
+    ? {
+        role: session.user.role ?? "student",
+        name: session.user.name,
+        email: session.user.email,
+      }
+    : null
+
+  let application: ExistingApplication = null
+
+  if (viewer?.role === "student") {
+    const status = await getApplicationStatus(id)
+    if (status.applied && status.status && status.appliedAt) {
+      application = {
+        status: status.status,
+        appliedOn: new Date(status.appliedAt).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        }),
+      }
+    }
+  }
+
+  return (
+    <TuitionDetailsView
+      tuition={tuition}
+      applyPanel={
+        <ApplyPanel
+          tuitionId={tuition._id}
+          tuitionTitle={tuition.title}
+          viewer={viewer}
+          application={application}
+        />
+      }
+    />
+  )
 }
 
 const DetailsFallback = () => {
