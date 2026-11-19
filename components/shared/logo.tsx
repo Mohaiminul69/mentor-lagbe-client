@@ -4,11 +4,13 @@ import { cn } from "@/lib/utils"
 type LogoProps = {
   className?: string
   accentClassName?: string
+  textClassName?: string
 }
 
 export const Logo = ({
   className,
   accentClassName = "text-primary",
+  textClassName,
 }: LogoProps) => {
   return (
     <Link
@@ -21,11 +23,11 @@ export const Logo = ({
     >
       <span
         aria-hidden="true"
-        className="flex size-[34px] items-center justify-center rounded-[10px] bg-primary text-lg text-primary-foreground"
+        className="flex size-[34px] shrink-0 items-center justify-center rounded-[10px] bg-primary text-lg text-primary-foreground"
       >
         M
       </span>
-      <span>
+      <span className={textClassName}>
         Mentor<span className={accentClassName}>Lagbe</span>
       </span>
     </Link>

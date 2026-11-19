@@ -1,11 +1,32 @@
 import "server-only"
+import { cache } from "react"
 import jwt from "jsonwebtoken"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import { auth } from "@/lib/auth"
 
-export const getSession = async () => {
+export const getSession = cache(async () => {
   return auth.api.getSession({ headers: await headers() })
+})
+
+export const requireUser = async (redirectTo = "/dashboard") => {
+  const session = await getSession()
+
+  if (!session) {
+    redirect(`/sign-in?redirect=${redirectTo}`)
+  }
+
+  return session
+}
+
+export const requireRole = async (role: "student" | "tutor" | "admin") => {
+  const session = await requireUser(`/dashboard/${role}`)
+
+  if (session.user.role !== role) {
+    redirect(`/dashboard/${session.user.role ?? "student"}`)
+  }
+
+  return session
 }
 
 export const getToken = async () => {
