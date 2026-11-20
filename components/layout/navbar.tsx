@@ -61,13 +61,16 @@ export const Navbar = () => {
       >
         <Logo />
 
-        <ul className="hidden items-center gap-1 text-[15px] font-medium md:flex">
+        <ul className="hidden items-center gap-1 text-[15px] font-medium lg:flex">
           {navLinks.map((link) => (
             <li key={link.href}>
               <Link
                 href={link.href}
                 aria-current={isActive(link.href) ? "page" : undefined}
-                className={cn("rounded-lg px-3.5 py-2", linkClass(link.href))}
+                className={cn(
+                  "rounded-lg px-3.5 py-2 whitespace-nowrap",
+                  linkClass(link.href)
+                )}
               >
                 {link.label}
               </Link>
@@ -75,7 +78,7 @@ export const Navbar = () => {
           ))}
         </ul>
 
-        <div className="hidden items-center gap-2.5 md:flex">
+        <div className="hidden items-center gap-2.5 lg:flex">
           <ThemeToggle />
           {isPending ? (
             <div className="h-11 w-44 animate-pulse rounded-full bg-muted" />
@@ -85,7 +88,7 @@ export const Navbar = () => {
                 variant="outline"
                 nativeButton={false}
                 render={<Link href={`/dashboard/${role}`} />}
-                className="hidden h-11 rounded-[10px] px-4 text-[15px] font-semibold lg:inline-flex"
+                className="hidden h-11 rounded-[10px] px-4 text-[15px] font-semibold xl:inline-flex"
               >
                 Dashboard
               </Button>
@@ -118,7 +121,7 @@ export const Navbar = () => {
           )}
         </div>
 
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="flex items-center gap-2 lg:hidden">
           <ThemeToggle />
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger
@@ -127,7 +130,7 @@ export const Navbar = () => {
                   variant="outline"
                   size="icon"
                   aria-label="Open menu"
-                  className="size-11 rounded-[10px] md:hidden"
+                  className="size-11 rounded-[10px] lg:hidden"
                 />
               }
             >
