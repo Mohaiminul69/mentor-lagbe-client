@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from "react"
 
-const MOBILE_BREAKPOINT = 768
+const MOBILE_BREAKPOINT = 1024
 const query = `(max-width: ${MOBILE_BREAKPOINT - 1}px)`
 
 const subscribe = (onChange: () => void) => {

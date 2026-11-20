@@ -41,7 +41,7 @@ const DashboardShell = async ({ children }: { children: ReactNode }) => {
 const DashboardFallback = () => {
   return (
     <div className="flex min-h-svh w-full">
-      <div className="hidden w-[260px] flex-col gap-4 border-r bg-card p-4 md:flex">
+      <div className="hidden w-[260px] flex-col gap-4 border-r bg-card p-4 lg:flex">
         <Skeleton className="h-9 w-40" />
         <Skeleton className="h-24 rounded-xl" />
         {Array.from({ length: 4 }, (_, index) => (
