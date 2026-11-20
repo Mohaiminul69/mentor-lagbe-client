@@ -3,10 +3,11 @@ import { cache } from "react"
 import jwt from "jsonwebtoken"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
-import { auth } from "@/lib/auth"
+import { auth, withAuthDb } from "@/lib/auth"
 
 export const getSession = cache(async () => {
-  return auth.api.getSession({ headers: await headers() })
+  const requestHeaders = await headers()
+  return withAuthDb(() => auth.api.getSession({ headers: requestHeaders }))
 })
 
 export const requireUser = async (redirectTo = "/dashboard") => {

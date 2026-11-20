@@ -6,6 +6,27 @@ import { mongodbAdapter } from "@better-auth/mongo-adapter"
 const client = new MongoClient(process.env.MONGODB_URI as string)
 const db = client.db(process.env.DB_NAME)
 
+const closedConnectionErrors = ["MongoTopologyClosedError", "MongoNotConnectedError"]
+
+const isClosedConnectionError = (error: unknown): boolean => {
+  if (!(error instanceof Error)) return false
+  return (
+    closedConnectionErrors.includes(error.name) ||
+    isClosedConnectionError(error.cause)
+  )
+}
+
+export const withAuthDb = async <T>(task: () => Promise<T>): Promise<T> => {
+  await client.connect()
+  try {
+    return await task()
+  } catch (error) {
+    if (!isClosedConnectionError(error)) throw error
+    await client.connect()
+    return task()
+  }
+}
+
 const signUpRoles = ["student", "tutor"]
 
 export const auth = betterAuth({
