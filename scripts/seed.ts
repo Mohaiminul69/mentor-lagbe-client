@@ -280,6 +280,97 @@ const seedTuitions: SeedTuition[] = [
   },
 ]
 
+const pendingTuitions: SeedTuition[] = [
+  {
+    title: "SAT Math Intensive Batch",
+    subject: "Math",
+    classLevel: "Admission",
+    mode: "Online",
+    location: "Online (Zoom)",
+    monthlyFee: 60,
+    daysPerWeek: 3,
+    bannerImage: banner("photo-1509228468518-180dd4864904"),
+    description:
+      "An eight-week SAT Math batch covering algebra, problem solving, data analysis and advanced math, with a full practice test every weekend and score tracking.",
+    tutorEmail: "ayesha.siddiqua@mentorlagbe.com",
+  },
+  {
+    title: "Business English Communication",
+    subject: "English",
+    classLevel: "Professional",
+    mode: "Offline",
+    location: "Gulshan, Dhaka",
+    monthlyFee: 45,
+    daysPerWeek: 2,
+    bannerImage: banner("photo-1457369804613-52c61a468e7d"),
+    description:
+      "Practical English for the workplace: emails, presentations, meetings and interviews. Small groups with role plays and personal feedback on every session.",
+    tutorEmail: "ayesha.siddiqua@mentorlagbe.com",
+  },
+]
+
+type SeedApplication = {
+  tuitionTitle: string
+  studentEmail: string
+  preferredSchedule: string
+  studentNote: string
+  status: "pending" | "accepted" | "rejected"
+  daysAgo: number
+}
+
+const seedApplications: SeedApplication[] = [
+  {
+    tuitionTitle: "SSC General Math Complete Batch",
+    studentEmail: "student@mentorlagbe.com",
+    preferredSchedule: "Sun, Tue, Thu after 5 PM",
+    studentNote:
+      "I struggle with geometry and trigonometry. I want to finish the full syllabus before my test exam.",
+    status: "pending",
+    daysAgo: 1,
+  },
+  {
+    tuitionTitle: "HSC Physics 1st & 2nd Paper",
+    studentEmail: "student@mentorlagbe.com",
+    preferredSchedule: "Weekends, morning",
+    studentNote:
+      "Need help with vectors and dynamics. I prefer solving lots of creative questions in class.",
+    status: "accepted",
+    daysAgo: 6,
+  },
+  {
+    tuitionTitle: "HSC Chemistry Full Syllabus",
+    studentEmail: "student@mentorlagbe.com",
+    preferredSchedule: "Mon and Wed evenings",
+    studentNote: "Organic chemistry is my weakest chapter. Looking for regular chapter tests.",
+    status: "pending",
+    daysAgo: 2,
+  },
+  {
+    tuitionTitle: "SSC General Math Complete Batch",
+    studentEmail: "arif.hossain@mentorlagbe.com",
+    preferredSchedule: "Sat and Mon, 4 PM to 6 PM",
+    studentNote: "Helping my younger brother prepare for SSC. He needs strong algebra basics.",
+    status: "pending",
+    daysAgo: 3,
+  },
+  {
+    tuitionTitle: "IELTS Band 7+ Speaking & Writing",
+    studentEmail: "arif.hossain@mentorlagbe.com",
+    preferredSchedule: "Weekday nights",
+    studentNote: "Target band 7.5 for a master's application. Writing Task 2 is my main concern.",
+    status: "accepted",
+    daysAgo: 9,
+  },
+  {
+    tuitionTitle: "Python Programming from Zero",
+    studentEmail: "arif.hossain@mentorlagbe.com",
+    preferredSchedule: "Friday afternoon",
+    studentNote: "Complete beginner. I want to build small automation scripts for my work.",
+    status: "rejected",
+    daysAgo: 12,
+  },
+]
+
 const daysAgo = (days: number) => new Date(Date.now() - days * 86400000)
 
 const seed = async () => {
@@ -288,6 +379,7 @@ const seed = async () => {
   const db = client.db(process.env.DB_NAME)
   const users = db.collection("users")
   const tuitions = db.collection("tuitions")
+  const applications = db.collection("applications")
   const payments = db.collection("payments")
 
   for (const user of seedUsers) {
@@ -324,22 +416,73 @@ const seed = async () => {
   const tutors = seedUsers.filter((user) => user.role === "tutor")
   const tutorEmails = tutors.map((tutor) => tutor.email)
 
+  const studentEmails = seedUsers
+    .filter((user) => user.role === "student")
+    .map((student) => student.email)
+  const tutorName = (email: string) =>
+    tutors.find((tutor) => tutor.email === email)?.name ?? ""
+
+  await applications.deleteMany({ studentEmail: { $in: studentEmails } })
   await tuitions.deleteMany({ tutorEmail: { $in: tutorEmails } })
-  await tuitions.insertMany(
-    seedTuitions.map((tuition, index) => ({
-      ...tuition,
-      tutorName: tutors.find((tutor) => tutor.email === tuition.tutorEmail)?.name,
-      approvalStatus: "approved",
-      isActive: true,
-      createdAt: daysAgo(index * 2 + 1),
-    }))
+
+  const approvedDocs = seedTuitions.map((tuition, index) => ({
+    ...tuition,
+    tutorName: tutorName(tuition.tutorEmail),
+    approvalStatus: "approved",
+    isActive: true,
+    createdAt: daysAgo(index * 2 + 1),
+  }))
+  const pendingDocs = pendingTuitions.map((tuition, index) => ({
+    ...tuition,
+    tutorName: tutorName(tuition.tutorEmail),
+    approvalStatus: "pending",
+    isActive: true,
+    createdAt: daysAgo(index),
+  }))
+
+  const inserted = await tuitions.insertMany([...approvedDocs, ...pendingDocs])
+  const allDocs = [...approvedDocs, ...pendingDocs].map((doc, index) => ({
+    ...doc,
+    _id: inserted.insertedIds[index],
+  }))
+  console.log(
+    `Inserted ${approvedDocs.length} approved and ${pendingDocs.length} pending tuitions`
   )
-  console.log(`Inserted ${seedTuitions.length} approved tuitions`)
+
+  const applicationDocs = seedApplications.map((application) => {
+    const tuition = allDocs.find((doc) => doc.title === application.tuitionTitle)
+    const student = seedUsers.find((user) => user.email === application.studentEmail)
+
+    if (!tuition || !student) {
+      throw new Error(`Missing tuition or student for ${application.tuitionTitle}`)
+    }
+
+    return {
+      tuitionId: tuition._id.toString(),
+      tuitionTitle: tuition.title,
+      subject: tuition.subject,
+      monthlyFee: tuition.monthlyFee,
+      tutorName: tuition.tutorName,
+      tutorEmail: tuition.tutorEmail,
+      studentName: student.name,
+      studentEmail: student.email,
+      studentPhone: student.phone,
+      preferredSchedule: application.preferredSchedule,
+      studentNote: application.studentNote,
+      status: application.status,
+      appliedAt: daysAgo(application.daysAgo),
+    }
+  })
+
+  await applications.insertMany(applicationDocs)
+  console.log(`Inserted ${applicationDocs.length} applications`)
 
   const proTutor = seedUsers.find((user) => user.plan === "pro")
+  const seededEmails = seedUsers.map((user) => user.email)
+
+  await payments.deleteMany({ userEmail: { $in: seededEmails } })
 
   if (proTutor) {
-    await payments.deleteMany({ stripeSessionId: { $regex: "^cs_seed_" } })
     await payments.insertOne({
       userEmail: proTutor.email,
       userName: proTutor.name,
