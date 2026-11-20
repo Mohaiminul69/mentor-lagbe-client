@@ -36,9 +36,9 @@ export const DashboardSidebar = ({ user }: { user: DashboardUser }) => {
 
   return (
     <Sidebar collapsible="icon" className="border-r">
-      <SidebarHeader className="gap-4 p-4 group-data-[collapsible=icon]:px-2">
+      <SidebarHeader className="gap-4 p-4 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:px-0">
         <Logo textClassName={hideWhenCollapsed} />
-        <div className="flex items-center gap-3 rounded-xl border bg-muted p-3 group-data-[collapsible=icon]:border-0 group-data-[collapsible=icon]:bg-transparent group-data-[collapsible=icon]:p-0">
+        <div className="flex items-center gap-3 rounded-xl border bg-muted p-3 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:border-0 group-data-[collapsible=icon]:bg-transparent group-data-[collapsible=icon]:p-0">
           <UserAvatar name={user.name} image={user.image} className="size-10 group-data-[collapsible=icon]:size-8" />
           <div className={`flex min-w-0 flex-col items-start gap-1 ${hideWhenCollapsed}`}>
             <span className="max-w-full truncate text-sm font-semibold">
@@ -52,7 +52,7 @@ export const DashboardSidebar = ({ user }: { user: DashboardUser }) => {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-2">
+      <SidebarContent className="px-2 group-data-[collapsible=icon]:px-0">
         <SidebarGroup>
           <SidebarGroupLabel>Menu</SidebarGroupLabel>
           <SidebarGroupContent>
