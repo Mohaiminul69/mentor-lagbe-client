@@ -3,8 +3,12 @@
 import { useState } from "react"
 import Link from "next/link"
 import { AnimatePresence, MotionConfig, motion } from "motion/react"
-import { Check, Lock } from "lucide-react"
+import { Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import {
+  SubscribeButton,
+  type PricingViewer,
+} from "@/components/shared/subscribe-button"
 import { plans, type PlanAudience } from "@/lib/plans"
 import { cn } from "@/lib/utils"
 
@@ -34,8 +38,16 @@ const FeatureList = ({
   </ul>
 )
 
-export const PricingCards = () => {
-  const [audience, setAudience] = useState<PlanAudience>("student")
+type PricingCardsProps = {
+  viewer?: PricingViewer
+  initialAudience?: PlanAudience
+}
+
+export const PricingCards = ({
+  viewer,
+  initialAudience = "student",
+}: PricingCardsProps) => {
+  const [audience, setAudience] = useState<PlanAudience>(initialAudience)
   const { free, pro } = plans[audience]
 
   return (
@@ -113,14 +125,7 @@ export const PricingCards = () => {
                 </span>
               </p>
               <FeatureList features={pro.features} checkClass="text-primary" />
-              <Button
-                nativeButton={false}
-                render={<Link href="/pricing" />}
-                className="h-12 rounded-[10px] text-[15px] font-semibold hover:bg-primary/90"
-              >
-                <Lock aria-hidden="true" />
-                Subscribe with Stripe
-              </Button>
+              <SubscribeButton audience={audience} viewer={viewer} />
             </div>
           </motion.div>
         </AnimatePresence>
