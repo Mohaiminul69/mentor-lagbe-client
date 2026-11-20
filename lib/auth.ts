@@ -1,4 +1,5 @@
 import { betterAuth } from "better-auth"
+import { APIError, createAuthMiddleware } from "better-auth/api"
 import { MongoClient } from "mongodb"
 import { mongodbAdapter } from "@better-auth/mongo-adapter"
 
@@ -50,14 +51,15 @@ export const auth = betterAuth({
           return { data: { ...user, role, plan: "free" } }
         },
       },
-      update: {
-        before: async (data) => {
-          const safeData = { ...data }
-          delete safeData.role
-          delete safeData.plan
-          return { data: safeData }
-        },
-      },
     },
+  },
+  hooks: {
+    before: createAuthMiddleware(async (ctx) => {
+      if (ctx.path === "/update-user" && ctx.body && "role" in ctx.body) {
+        throw new APIError("BAD_REQUEST", {
+          message: "Role cannot be changed from your profile",
+        })
+      }
+    }),
   },
 })
